@@ -24,10 +24,6 @@
 
 ¡Bienvenid@ a Camara de Comercio! El servicio ha sido desplegado correctamente en el namespace "{{ .Release.Namespace }}"
 
-Perfil seleccionado: "{{ .Values.profile }}"
-{{ if (eq .Values.profile "dev") }}
-Endpoint: "{{ .Values.dev.ingress.host }}"
-{{ end }}
 
 ///// INSTRUCCIONES /////
 
