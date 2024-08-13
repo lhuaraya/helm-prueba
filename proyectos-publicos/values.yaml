@@ -23,8 +23,8 @@ publicodb:
 #  imageTag: latest
 #  port: 8978
 
-#dev:
-#  profile: dev
+dev:
+  profile: dev
 #  ingress:
 #    host: camara-madrid-dev.laudetech.dev
 #    dbhost: comercio-db.laudetech.dev
