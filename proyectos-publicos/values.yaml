@@ -1,0 +1,38 @@
+replicas: 7
+#Selecciona el perfil
+#dev=desarrollo
+#test=pruebas 
+
+profile: dev
+
+docker:
+  ns: laudetech
+
+publicofront:
+  imageTag: latest
+  port: 1080
+
+publicoback:
+  imageTag: latest
+  port: 8080
+
+publicodb:
+  port: 1433
+
+#cloudbeaver:
+#  imageTag: latest
+#  port: 8978
+
+#dev:
+#  profile: dev
+#  ingress:
+#    host: camara-madrid-dev.laudetech.dev
+#    dbhost: comercio-db.laudetech.dev
+#
+#test:
+#  profile: test
+#  ingress:
+#    host: camara-madrid.laudetech.dev
+#    dbhost: comercio-db-test.laudetech.dev
+
+

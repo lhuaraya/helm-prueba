@@ -1,0 +1,5 @@
+apiVersion: v2
+description: PROYECTOS-PUBLICOS
+name: proyectos-publicos
+type: application
+version: "1"

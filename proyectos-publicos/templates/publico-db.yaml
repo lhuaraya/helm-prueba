@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: publico-db
+    namespace: {{ .Release.Namespace }}
+    labels:
+        app: publico-db
+spec:
+    selector:
+        app: publico-db
+    ports:
+        - port: {{ .Values.publicodb.port }}
+          targetPort: 1433
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publico-db
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: publico-db
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: publico-db
+  template:
+    metadata:
+      labels:
+        app: publico-db
+    spec:
+      securityContext:
+        fsGroup: 10001
+      hostname: publico-db
+      containers:
+      - image:  mcr.microsoft.com/mssql/server:2022-latest
+        imagePullPolicy: Always
+        name: publico-db
+        
+        ports:
+        - containerPort: {{ .Values.publicodb.port }}
+        
+        resources:
+          requests:
+            cpu: 1m
+            memory: 500Mi
+#          limits:
+#            cpu: 20m
+#            memory: 3Gi
+
+        env:
+          - name: TZ
+            value: "Europe/Madrid"
+          - name: ACCEPT_EULA
+            value: "Y"
+          - name: MSSQL_SA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: publico-db-token
+                key: password
+        
+        volumeMounts:
+        
+          - mountPath: "/var/opt/mssql"
+            name: dbdata
+      volumes:
+      
+      - name: dbdata
+        hostPath:
+          {{ if (eq .Values.profile "dev") }}
+          path: /opt/volumes/proyecto-publico/db-dev/data
+          {{ else if (eq .Values.profile "test") }}
+          path: /opt/volumes/proyecto-publico/db-test/data
+          {{ end }}
+          type: Directory
