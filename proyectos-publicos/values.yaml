@@ -12,13 +12,6 @@ publicofront:
   imageTag: latest
   port: 1080
 
-publicoback:
-  imageTag: latest
-  port: 8080
-
-publicodb:
-  port: 1433
-
 #cloudbeaver:
 #  imageTag: latest
 #  port: 8978

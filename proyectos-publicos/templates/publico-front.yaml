@@ -37,6 +37,17 @@ spec:
         
     spec:
       hostname: publico-front
+      #Esta linea balancea los pods
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - publico-front
+            topologyKey: "kubernetes.io/hostname"        
       containers:
       {{ if (eq .Values.profile "dev") }}
       - image: {{ .Values.docker.ns }}/proyectos-publicos-front:dev
