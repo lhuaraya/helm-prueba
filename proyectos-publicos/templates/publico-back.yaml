@@ -1,0 +1,82 @@
+{{ if or (eq .Values.profile "dev") (eq .Values.profile "test") }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: publico-back
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: publico-back
+spec:
+    selector:
+      app: publico-back
+    ports:
+      - port: {{ .Values.publicoback.port }}
+        name: http
+        targetPort: 8080
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publico-back
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: publico-back
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: publico-back
+  template:
+    metadata:
+      labels:
+        app: publico-back
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+        
+    spec:
+      hostname: publico-back
+      #Esta linea balancea los pods
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - publico-back
+              topologyKey: "kubernetes.io/hostname"        
+      containers:
+      {{ if (eq .Values.profile "dev") }}
+      - image: willfarrell/ping
+      {{ else if (eq .Values.profile "test") }}
+      - image: willfarrell/ping
+      {{ end }}
+        imagePullPolicy: Always
+        name: publico-back
+        
+        ports:
+        - containerPort: 8080
+
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 1m
+#          limits:
+#            memory: 50Mi
+#            cpu: 5m
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 60
+
+      imagePullSecrets:
+      - name: publico-docker-registry
+{{ end }}
