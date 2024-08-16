@@ -52,9 +52,9 @@ spec:
               topologyKey: "kubernetes.io/hostname"        
       containers:
       {{ if (eq .Values.profile "dev") }}
-      - image: {{ .Values.docker.ns }}/proyectos-publicos-front:dev
+      - image: willfarrell/ping
       {{ else if (eq .Values.profile "test") }}
-      - image: {{ .Values.docker.ns }}/proyectos-publicos-front:test
+      - image: willfarrell/ping
       {{ end }}
         imagePullPolicy: Always
         name: publico-front
