@@ -1,0 +1,8 @@
+replicas: 1
+
+profile: pro
+
+pro: 
+ingress:
+  tls: true
+  host: wiki-2.laudetech.dev

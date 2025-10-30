@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apara-web
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    kubernetes.io/ingress.class: "public"
+    {{ if .Values.ingress.tls }}
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    {{ end }}
+
+spec:
+  {{ if .Values.ingress.tls }}
+  tls:
+  #En "hosts" se añaden los DNS tipo A que tenemos en Cloudflare ya que apuntan a la ip del Nodo pro.qodev.es
+  - hosts:
+    - {{ .Values.ingress.host }}
+    - apara.es
+    secretName: apara-web-tls
+  {{ end }}
+#Aqui en "rules" se van añadiendo los host decalarados en el anterior apartado.
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: apara-web
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+
+  rules:
+  - host: apara.es
+    http:
+      paths:
+      - backend:
+          service:
+            name: apara-web
+            port:
+              number: 80
+        path: /
+        pathType: Prefix

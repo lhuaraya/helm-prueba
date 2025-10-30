@@ -1,0 +1,20 @@
+                                                 
+ _______ _______ _______ _______ _______ _______ 
+|\     /|\     /|\     /|\     /|\     /|\     /|
+| +---+ | +---+ | +---+ | +---+ | +---+ | +---+ |
+| |   | | |   | | |   | | |   | | |   | | |   | |
+| |a  | | |p  | | |a  | | |r  | | |a  | | | WEB  | |
+| +---+ | +---+ | +---+ | +---+ | +---+ | +---+ |
+|/_____\|/_____\|/_____\|/_____\|/_____\|/_____\|
+                                                 
+=================================================
+||        APARA S.L . (c) 2021        ||
+=================================================
+
+¡Bienvenid@ a la web de APARA ! El servicio ha sido desplegado correctamente.
+
+Namespace: "{{ .Release.Namespace }}"
+Endpoint: "{{ .Values.ingress.host }}
+
+Para cambiar el Endpoint, añade --set ingress.host=<nuevo-host> al despliegue de Helm.
+Para desactivar la obtención de certificados, añade --set ingress.tls=false

@@ -1,0 +1,65 @@
+{{ if or (eq .Values.profile "pre") (eq .Values.profile "pro") }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: apara-web
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: apara-web
+spec:
+    selector:
+      app: apara-web
+    ports:
+      - port: 80
+        name: http
+        targetPort: 80
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apara-web
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: apara-web
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: apara-web
+  template:
+    metadata:
+      labels:
+        app: apara-web
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+        
+    spec:
+      hostname: apara-web
+      containers:
+      - image: docker-registry.laude.tech/web-apara:latest
+        imagePullPolicy: Always
+        name: apara-web
+
+        ports:
+        - containerPort: 80
+
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+#            cpu: "600m"
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 60
+          periodSeconds: 60
+
+      imagePullSecrets:
+      - name: apara-regcred-laude
+{{ end }}
