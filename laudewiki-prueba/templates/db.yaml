@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wiki-db
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: wiki-db
+spec:
+    selector:
+      app: wiki-db
+    ports:
+      - port: {{ .Values.db.port }}
+        targetPort: 5432
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki-db
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: wiki-db
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: wiki-db
+  template:
+    metadata:
+      labels:
+        app: wiki-db
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+        
+    spec:
+      hostname: wiki-db
+      nodeSelector:
+        kubernetes.io/hostname: "microk8s-node01"
+      containers:
+      - image: postgres:{{ .Values.db.imageTag }}
+        imagePullPolicy: Always
+        name: wikidb
+        ports:
+        - containerPort: 5432
+
+#        resources:
+#          requests:
+#            memory: "100Mi"
+#            cpu: "20m"
+#          limits:
+#            memory: "100Mi"
+#            cpu: "500m"
+
+        env:
+          - name: TZ
+            value: "Europe/Madrid"
+          - name: POSTGRES_DB
+            value: wiki
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: wiki-db-token
+                key: username
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: wiki-db-token
+                key: password
+
+        livenessProbe:
+          exec:
+            command:
+              - bash
+              - "-c"
+              - psql -U $POSTGRES_USER -d $POSTGRES_DB -c SELECT
+          initialDelaySeconds: 20
+          periodSeconds: 30
+          failureThreshold: 2
+
+        readinessProbe:
+          exec:
+            command:
+              - bash
+              - "-c"
+              - psql -U $POSTGRES_USER -d $POSTGRES_DB -c SELECT
+          initialDelaySeconds: 3
+          periodSeconds: 15
+
+        volumeMounts:
+          - mountPath: "/var/lib/postgresql/data"
+            name: db-data
+
+      terminationGracePeriodSeconds: 15
+
+      volumes:
+      - name: db-data
+        hostPath:
+          path: /opt/volumes/laudewiki/db-data
+          type: Directory

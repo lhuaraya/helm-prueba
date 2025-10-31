@@ -1,0 +1,13 @@
+replicas: 1
+
+db:
+  imageTag: 11-alpine
+  port: 5432
+
+wiki:
+  imageTag: latest
+  port: 3000
+
+ingress:
+  tls: true
+  host: wiki-2.laudetech.dev

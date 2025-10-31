@@ -1,0 +1,5 @@
+apiVersion: v2
+description: Wiki de Quality Objects basada en Wikijs
+name: wiki
+type: application
+version: "1"

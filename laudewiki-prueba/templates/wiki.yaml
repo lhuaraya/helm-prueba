@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wiki
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: wiki
+spec:
+    selector:
+      app: wiki
+    ports:
+      - port: {{ .Values.wiki.port }}
+        name: http
+        targetPort: 3000
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: wiki
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: wiki
+  template:
+    metadata:
+      labels:
+        app: wiki
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+
+    spec:
+      securityContext:
+        runAsUser: 0
+
+    spec:
+      hostname: wiki
+      nodeSelector:
+        kubernetes.io/hostname: "microk8s-control"
+      containers:
+      - image: requarks/wiki:{{ .Values.wiki.imageTag }}
+        imagePullPolicy: Always
+        name: wiki
+        ports:
+        - containerPort: 3000
+        securityContext:
+          runAsUser: 0
+          allowPrivilegeEscalation: true
+
+#        resources:
+#          requests:
+#            memory: "250Mi"
+#            cpu: "20m"
+#          limits:
+#            memory: "500Mi"
+#            cpu: "500m"
+
+        env:
+          - name: TZ
+            value: "Europe/Madrid"
+          - name: DB_TYPE
+            value: postgres
+          - name: DB_HOST
+            value: wiki-db
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_NAME
+            value: wiki
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: wiki-db-token
+                key: username
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: wiki-db-token
+                key: password
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 60
+          periodSeconds: 60
+
+        volumeMounts:
+          - mountPath: "/opt/wiki/"
+            name: wiki-data
+
+         # - mountPath: "/wiki/server/modules/authentication/azure/"
+         #   name: wikiconf
+
+      terminationGracePeriodSeconds: 30
+
+      volumes:
+      - name: wiki-data
+        hostPath:
+          path: /opt/volumes/laudewiki/data
+          type: DirectoryOrCreate
+
+      ##- name: wikiconf
+      ##  hostPath:
+      ##    path: /opt/volumes/laudewiki/wiki/server/modules/authentication/azure
+      ##    type: Directory

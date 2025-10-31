@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wiki
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    kubernetes.io/ingress.class: "public"
+    {{ if .Values.ingress.tls }}
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    {{ end }}
+
+## DDoS block
+    nginx.ingress.kubernetes.io/limit-connections: '10'
+    nginx.ingress.kubernetes.io/limit-rpm: '60'
+
+# Other directives
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+
+    nginx.ingress.kubernetes.io/client-body-buffer-size: 1m
+    nginx.ingress.kubernetes.io/client-header-buffer-size: 1k
+    nginx.ingress.kubernetes.io/large-client-header-buffers: 2 1k
+
+spec:
+  {{ if .Values.ingress.tls }}
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
+    secretName: wiki-tls
+  {{ end }}
+  rules:
+  - host: wiki-2.laudetech.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: wiki
+            port:
+              number: 3000
