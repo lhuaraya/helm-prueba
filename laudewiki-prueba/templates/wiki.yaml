@@ -74,12 +74,12 @@ spec:
           - name: DB_USER
             valueFrom:
               secretKeyRef:
-                name: wiki-db-token
+                name: wiki-wiki-token
                 key: username
           - name: DB_PASS
             valueFrom:
               secretKeyRef:
-                name: wiki-db-token
+                name: wiki-wiki-token
                 key: password
 
         livenessProbe:
