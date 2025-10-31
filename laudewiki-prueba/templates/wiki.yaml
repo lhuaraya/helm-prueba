@@ -41,7 +41,7 @@ spec:
     spec:
       hostname: wiki
       nodeSelector:
-        kubernetes.io/hostname: "microk8s-control"
+        kubernetes.io/hostname: "mikrok8s-control"
       containers:
       - image: requarks/wiki:{{ .Values.wiki.imageTag }}
         imagePullPolicy: Always

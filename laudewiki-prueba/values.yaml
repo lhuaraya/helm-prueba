@@ -10,4 +10,4 @@ wiki:
 
 ingress:
   tls: true
-  host: wiki-2.laudetech.dev
+  host: nginx2.loquefaltaba.com

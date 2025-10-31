@@ -28,7 +28,7 @@ spec:
     secretName: wiki-tls
   {{ end }}
   rules:
-  - host: wiki-2.laudetech.dev
+  - host: {{ .Values.ingress.host }}
     http:
       paths:
       - path: /
