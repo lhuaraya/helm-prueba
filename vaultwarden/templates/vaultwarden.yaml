@@ -78,7 +78,7 @@ spec:
 
           - name: ADMIN_TOKEN
             #value: "sJd8FzP2VYkT+3bX6wPzFmshzU5l8mTkpU1cPqgVRvYzRmHXu4OeQKZjPpLUlQb3"
-            value: "$argon2i$v=19$m=16,t=2,p=1$VGRLblNUMTBwWXF0VGdCMQ$xCTtiJm/98BJ0IqDKFWE0A"
+            value: "FxtqNdHRBjcAh5DxDvJmNXiuPd3cR77hrsAPsRgThecgcrnqch2UcuYLAys6E9CbC3oDWku"
             # ===== SMTP (Brevo) =====
           - name: SMTP_HOST
             value: "smtp-relay.brevo.com"
