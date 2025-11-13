@@ -1,0 +1,16 @@
+         
+          
+__   __  ___    _   _   _     _______ 
+\ \ / / /   \  | | | | | |   |__   __|
+ \ V / / /_\ \ | |_| | | |___   | |  
+  \_/ / /   \ \\_____/ |_____|  |_| 
+                   
+                   
+==========================================
+||    Laude Technology S.L. (c) 2021     ||
+==========================================
+
+¡Bienvenid@ a la Vault! El servicio ha sido desplegado correctamente en el namespace "{{ .Release.Namespace }}"
+
+Para cambiar el Endpoint, añade --set ingress.host=<nuevo-host> al despliegue de Helm.
+Para desactivar la obtención de certificados, añade --set ingress.tls=false

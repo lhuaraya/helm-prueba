@@ -1,0 +1,13 @@
+replicas: 1
+
+db:
+  imageTag: 11-alpine
+  port: 5432
+
+vaultwarden:
+  imageTag: latest
+  port: 80
+
+ingress:
+  tls: true
+  host: vault.laude.tech
