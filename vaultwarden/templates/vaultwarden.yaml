@@ -40,8 +40,8 @@ spec:
 
     spec:
       hostname: vaultwarden
-      nodeSelector:
-        kubernetes.io/hostname: "prok8s-lt"
+      #nodeSelector:
+      #  kubernetes.io/hostname: "prok8s-lt"
       containers:
       - image: timshel/oidcwarden:{{ .Values.vaultwarden.imageTag }}
         imagePullPolicy: Always
